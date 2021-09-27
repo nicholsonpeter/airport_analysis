@@ -44,7 +44,7 @@ data <- left_join(airports, countries, by = c("iso_country" = "code")) %>%
          latitude = latitude_deg,
          longitude = longitude_deg,
          country = name.y) %>% 
-  rename.values(data$type, small_airport = "Small Airport")
+  mutate_if(is.character, as.factor)
 ```
 
 ' Checking I have everything I need
