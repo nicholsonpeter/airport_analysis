@@ -43,6 +43,53 @@ data <- left_join(airports, countries, by = c("iso_country" = "code")) %>%
   rename(airport_name = name.x,
          latitude = latitude_deg,
          longitude = longitude_deg,
-         country = name.y)
+         country = name.y) %>% 
+  rename.values(data$type, small_airport = "Small Airport")
+```
+
+' Checking I have everything I need
+```{r}
+glimpse(data)
+```
+
+# Tidying up airport type names
+```{r}
+data$type[data$type=="balloonport"] <- "Balloonport"
+data$type[data$type=="large_airport"] <- "Large Airport"
+data$type[data$type=="medium_airport"] <- "Medium Airport"
+data$type[data$type=="seaplane_base"] <- "Seaplane Base"
+data$type[data$type=="closed"] <- "Closed Airport"
+data$type[data$type=="heliport"] <- "Heliport"
+data$type[data$type=="small_airport"] <- "Small Airport"
+```
+
+
+```{r}
+data %>% 
+  filter(country %in% c("United States")) %>% 
+  ggplot(aes(x = fct_rev(fct_infreq(type)))) +
+  geom_bar(stat = "count", fill="#1380A1") +
+  ylim(c(0,15000)) +
+  geom_text(stat='count', aes(label=..count..),
+             hjust = 0.5, 
+             vjust = -0.5, 
+             colour = "black", 
+             fill = NA, 
+             label.size = NA, 
+             family="Helvetica", 
+             size = 6) +
+  geom_hline(yintercept = 0, size = 1, colour="#333333") +
+  #coord_flip() +
+  #scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  bbc_style() +
+  labs(title="U.S Airport Types",
+       subtitle = "Different types of airports in the U.S.A",
+       x = "Airport Type",
+       y = "Count")
+```
+
+```{r}
+data %>% count(country, sort = TRUE)
 ```
 
