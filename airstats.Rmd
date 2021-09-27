@@ -1,0 +1,48 @@
+---
+title: "airstats"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Loading the libraries
+```{r}
+library(tidyverse)
+library(bbplot)
+
+```
+
+# Importing the data
+```{r}
+airports <- read.csv("airports.csv")
+countries <- read.csv("countries.csv")
+regions <- read.csv("regions.csv")
+```
+
+# Having a quick look
+```{r}
+glimpse(airports)
+```
+
+# Grabbing data from other tables, selecting the columns I want, and renaming a few
+```{r}
+data <- left_join(airports, countries, by = c("iso_country" = "code")) %>% 
+  select(ident, 
+         type, 
+         name.x, 
+         latitude_deg, 
+         longitude_deg, 
+         elevation_ft, 
+         iso_country, 
+         scheduled_service, 
+         name.y) %>% 
+  rename(airport_name = name.x,
+         latitude = latitude_deg,
+         longitude = longitude_deg,
+         country = name.y)
+```
+
