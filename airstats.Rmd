@@ -43,8 +43,7 @@ data <- left_join(airports, countries, by = c("iso_country" = "code")) %>%
   rename(airport_name = name.x,
          latitude = latitude_deg,
          longitude = longitude_deg,
-         country = name.y) %>% 
-  mutate_if(is.character, as.factor)
+         country = name.y)
 ```
 
 ' Checking I have everything I need
@@ -67,17 +66,18 @@ data$type[data$type=="small_airport"] <- "Small Airport"
 ```{r}
 data %>% 
   filter(country %in% c("United States")) %>% 
-  ggplot(aes(x = fct_rev(fct_infreq(type)))) +
+  #ggplot(aes(x = fct_rev(fct_infreq(type)))) + #fct_rev changes order
+  ggplot(aes(x = fct_infreq(type))) + #fct_rev changes order
   geom_bar(stat = "count", fill="#1380A1") +
   ylim(c(0,15000)) +
   geom_text(stat='count', aes(label=..count..),
              hjust = 0.5, 
-             vjust = -0.5, 
+             vjust = -0.3, 
              colour = "black", 
              fill = NA, 
              label.size = NA, 
              family="Helvetica", 
-             size = 6) +
+             size = 5) +
   geom_hline(yintercept = 0, size = 1, colour="#333333") +
   #coord_flip() +
   #scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
