@@ -39,7 +39,8 @@ data <- left_join(airports, countries, by = c("iso_country" = "code")) %>%
          elevation_ft, 
          iso_country, 
          scheduled_service, 
-         name.y) %>% 
+         name.y,
+         iso_region) %>% 
   rename(airport_name = name.x,
          latitude = latitude_deg,
          longitude = longitude_deg,
@@ -90,6 +91,48 @@ data %>%
 ```
 
 ```{r}
-data %>% count(country, sort = TRUE)
+data %>% 
+  filter(iso_region %in% c("US-AK")) %>%
+  count(type, longitude, latitude, sort = TRUE) %>% 
+  ggplot(aes(longitude, latitude, colour = type)) +
+  geom_point() +
+  lims(x = c(-180, -130), y = c(51, 72)) +
+  scale_size_continuous() +
+  labs(title="Airport Types in Alaska, US") +
+  borders(
+  database = "world",
+  regions = ".",
+  fill = NA,
+  colour = "grey50",
+  xlim = NULL,
+  ylim = NULL) +
+  bbc_style() +
+  theme(legend.position = "right")
+```
+
+
+```{r}
+data %>% 
+  #filter(type %in% c("Heliport")) %>%
+  count(type, longitude, latitude, sort = TRUE) %>% 
+  ggplot(aes(longitude, latitude, colour = type)) +
+  geom_point() +
+  lims(x = c(-12, 15), y = c(48, 63)) +
+  scale_size_continuous() +
+  labs(title="Heliports in the North Sea",
+       subtitle="Heliports used as a commuter service to oil rigs") +
+  borders(
+  database = "world",
+  regions = ".",
+  fill = NA,
+  colour = "grey50",
+  xlim = NULL,
+  ylim = NULL) +
+  bbc_style() +
+  theme(legend.position = "right")
+```
+
+```{r}
+data %>% count(iso_region, sort = TRUE)
 ```
 
