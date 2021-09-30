@@ -2,18 +2,19 @@
 title: "airstats"
 output: html_document
 editor_options: 
-  chunk_output_type: console
+chunk_output_type: message=FALSE, warning=FALSE, include=FALSE
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
 
 # Loading the libraries
 ```{r}
+library(usmap)
+library(sf) #not sure which mapping to use for future use
 library(tidyverse)
 library(bbplot)
-
 ```
 
 # Importing the data
@@ -47,7 +48,7 @@ data <- left_join(airports, countries, by = c("iso_country" = "code")) %>%
          country = name.y)
 ```
 
-' Checking I have everything I need
+# Checking I have everything I need
 ```{r}
 glimpse(data)
 ```
@@ -63,6 +64,12 @@ data$type[data$type=="heliport"] <- "Heliport"
 data$type[data$type=="small_airport"] <- "Small Airport"
 ```
 
+# Adding elevations into 1000ft groupings
+```{r}
+labs <- c("0-999","1000-1999","2000-2999","3000-3999","4000-4999","5000-5999","6000+")
+
+data$elevation_group <- cut(data$elevation_ft, breaks = c(seq(0,6000, by = 1000), Inf), labels = labs, right = FALSE)
+```
 
 ```{r}
 data %>% 
@@ -133,6 +140,29 @@ data %>%
 ```
 
 ```{r}
-data %>% count(iso_region, sort = TRUE)
+data %>% 
+  drop_na(elevation_group) %>% 
+  ggplot(aes(x = fct_infreq(type), fill=forcats::fct_rev(elevation_group))) +
+  geom_bar(stat = "count", position = "fill") +
+  scale_fill_manual(values = c("#CCE9EF","#99D4DF","#66BECF","#33A9BF","#1A8FA6","#005869","#003B46")) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  bbc_style() +
+  theme(legend.position = "right") +
+  geom_hline(yintercept = 0, size = 1, colour = "#333333") +
+  labs(title="Elevation of different airport types")
+```
+
+```{r}
+data %>% 
+  filter(country %in% c("United States")) %>% 
+  count(iso_region, sort = TRUE)
+```
+
+```{r}
+plot_usmap(regions = "states") + 
+  labs(title = "U.S. States",
+       subtitle = "This is a blank map of the United States.") + 
+  theme(panel.background=element_blank())
 ```
 
