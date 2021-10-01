@@ -2,6 +2,7 @@
 title: "airstats"
 output: html_document
 editor_options: 
+  chunk_output_type: console
 chunk_output_type: message=FALSE, warning=FALSE, include=FALSE
 ---
 
@@ -71,6 +72,7 @@ labs <- c("0-999","1000-1999","2000-2999","3000-3999","4000-4999","5000-5999","6
 data$elevation_group <- cut(data$elevation_ft, breaks = c(seq(0,6000, by = 1000), Inf), labels = labs, right = FALSE)
 ```
 
+# Looking at airport types in USA
 ```{r}
 data %>% 
   filter(country %in% c("United States")) %>% 
@@ -97,6 +99,7 @@ data %>%
        y = "Count")
 ```
 
+# Mapping airport types in Alaska, USA
 ```{r}
 data %>% 
   filter(iso_region %in% c("US-AK")) %>%
@@ -117,7 +120,7 @@ data %>%
   theme(legend.position = "right")
 ```
 
-
+# Investigating heliports seen in the North Sea
 ```{r}
 data %>% 
   #filter(type %in% c("Heliport")) %>%
@@ -139,6 +142,7 @@ data %>%
   theme(legend.position = "right")
 ```
 
+# Charting splits of elevation across airport types
 ```{r}
 data %>% 
   drop_na(elevation_group) %>% 
@@ -153,6 +157,7 @@ data %>%
   labs(title="Elevation of different airport types")
 ```
 
+# Looking at iso_region for US 
 ```{r}
 data %>% 
   filter(country %in% c("United States")) %>% 
@@ -165,4 +170,3 @@ plot_usmap(regions = "states") +
        subtitle = "This is a blank map of the United States.") + 
   theme(panel.background=element_blank())
 ```
-
